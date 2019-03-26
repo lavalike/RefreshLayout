@@ -20,18 +20,18 @@ import com.wangzhen.refresh.util.UIUtils;
  */
 public final class RefreshLayout extends LinearLayout {
     //默认拖动因子
-    private static final float DEFAULT_DRAG_FACTOR = 0.3f;
+    private static final float DEFAULT_REFRESH_FACTOR = 0.3f;
     //动画执行时间
-    private static final long DURATION_TIME = 250L;
+    private static final long DEFAULT_DURATION_TIME = 250L;
     //触发刷新阈值
     private int mRefreshThreshold;
-    private float mDragFactor;
+    private float mRefreshFactor;
     //是否正在拖动
     private boolean isDragging = false;
     //是否正在刷新
     private boolean isRefreshing = false;
     //是否启用下拉刷新
-    private boolean isEnable;
+    private boolean isRefreshEnable;
     //HeaderView
     private HeaderView mHeaderView;
     //ContentView
@@ -53,8 +53,9 @@ public final class RefreshLayout extends LinearLayout {
     public RefreshLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RefreshLayout);
-        mDragFactor = validateFactor(typedArray.getFloat(R.styleable.RefreshLayout_drag_factor, DEFAULT_DRAG_FACTOR));
-        isEnable = typedArray.getBoolean(R.styleable.RefreshLayout_drag_enable, true);
+        mRefreshFactor = validateFactor(typedArray.getFloat(R.styleable.RefreshLayout_refresh_factor, DEFAULT_REFRESH_FACTOR));
+        isRefreshEnable = typedArray.getBoolean(R.styleable.RefreshLayout_refresh_enable, true);
+        mRefreshThreshold = (int) typedArray.getDimension(R.styleable.RefreshLayout_refresh_threshold, UIUtils.dp2px(getContext(), 48));
         typedArray.recycle();
         init();
     }
@@ -62,7 +63,7 @@ public final class RefreshLayout extends LinearLayout {
     private void init() {
         setOrientation(VERTICAL);
         isDragging = false;
-        mRefreshThreshold = UIUtils.dp2px(getContext(), 150);
+        isRefreshing = false;
         createDefaultHeader();
     }
 
@@ -72,6 +73,15 @@ public final class RefreshLayout extends LinearLayout {
     private void createDefaultHeader() {
         mHeaderView = new RefreshHeader(getContext());
         addView(mHeaderView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+    }
+
+    /**
+     * 设置是否启用下拉刷新
+     *
+     * @param enable enable
+     */
+    public void setRefreshEnable(boolean enable) {
+        this.isRefreshEnable = enable;
     }
 
     /**
@@ -92,8 +102,17 @@ public final class RefreshLayout extends LinearLayout {
      *
      * @param factor factor
      */
-    public void setDragFactor(float factor) {
-        this.mDragFactor = validateFactor(factor);
+    public void setRefreshFactor(float factor) {
+        this.mRefreshFactor = validateFactor(factor);
+    }
+
+    /**
+     * 设置下拉刷新阈值
+     *
+     * @param threshold threshold in pixel
+     */
+    public void setRefreshThreshold(int threshold) {
+        this.mRefreshThreshold = threshold;
     }
 
     /**
@@ -104,7 +123,7 @@ public final class RefreshLayout extends LinearLayout {
      */
     private float validateFactor(float factor) {
         if (factor < 0) {
-            factor = DEFAULT_DRAG_FACTOR;
+            factor = DEFAULT_REFRESH_FACTOR;
         }
         if (factor > 1) {
             factor = 1;
@@ -125,7 +144,7 @@ public final class RefreshLayout extends LinearLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!isEnable) return super.onInterceptTouchEvent(ev);
+        if (!isRefreshEnable) return super.onInterceptTouchEvent(ev);
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastX = ev.getX();
@@ -151,7 +170,7 @@ public final class RefreshLayout extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        deltaY = event.getY() - lastY;
+        deltaY = (event.getY() - lastY) * mRefreshFactor;
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 if (isDragging) {
@@ -164,13 +183,13 @@ public final class RefreshLayout extends LinearLayout {
                     isDragging = false;
                     if (deltaY >= mRefreshThreshold) {
                         mHeaderView.startRefresh();
-                        animChangeHeaderHeight((int) deltaY, mRefreshThreshold);
+                        smoothChangeHeaderHeight((int) deltaY, mRefreshThreshold);
                         if (callback != null && !isRefreshing) {
                             callback.onRefresh();
                         }
                         isRefreshing = true;
                     } else {
-                        animChangeHeaderHeight((int) deltaY, 0);
+                        smoothChangeHeaderHeight((int) deltaY, 0);
                         isRefreshing = false;
                     }
                 }
@@ -180,12 +199,12 @@ public final class RefreshLayout extends LinearLayout {
     }
 
     /**
-     * 将HeaderView高度从start变化到end
+     * 将HeaderView高度从start平滑变化到end
      *
      * @param start start
      * @param end   end
      */
-    private void animChangeHeaderHeight(int start, int end) {
+    private void smoothChangeHeaderHeight(int start, int end) {
         if (start < 0) start = 0;
         if (end < 0) end = 0;
         ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
@@ -195,7 +214,7 @@ public final class RefreshLayout extends LinearLayout {
                 changeHeaderHeight((int) animation.getAnimatedValue());
             }
         });
-        valueAnimator.setDuration(DURATION_TIME);
+        valueAnimator.setDuration(DEFAULT_DURATION_TIME);
         valueAnimator.start();
     }
 
@@ -207,7 +226,7 @@ public final class RefreshLayout extends LinearLayout {
     private void changeHeaderHeight(int height) {
         if (height < 0) height = 0;
         ViewGroup.LayoutParams layoutParams = mHeaderView.getLayoutParams();
-        layoutParams.height = (int) (height * mDragFactor);
+        layoutParams.height = height;
         mHeaderView.requestLayout();
     }
 
@@ -226,19 +245,23 @@ public final class RefreshLayout extends LinearLayout {
      * 手动调用刷新
      */
     public void startRefresh() {
-        isDragging = true;
-        isRefreshing = true;
-        mHeaderView.startRefresh();
-        animChangeHeaderHeight(0, mRefreshThreshold);
+        if (!isRefreshing) {
+            isDragging = true;
+            isRefreshing = true;
+            mHeaderView.startRefresh();
+            smoothChangeHeaderHeight(0, mRefreshThreshold);
+        }
     }
 
     /**
      * 手动结束刷新
      */
     public void refreshComplete() {
-        isRefreshing = false;
-        isDragging = false;
-        mHeaderView.completeRefresh();
-        animChangeHeaderHeight(mRefreshThreshold, 0);
+        if (isRefreshing) {
+            isRefreshing = false;
+            isDragging = false;
+            mHeaderView.completeRefresh();
+            smoothChangeHeaderHeight(mRefreshThreshold, 0);
+        }
     }
 }

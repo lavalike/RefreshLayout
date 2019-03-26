@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RefreshLayout">
-        <attr name="drag_factor" format="float" />
-        <attr name="drag_enable" format="boolean" />
+        <attr name="refresh_factor" format="float" />
+        <attr name="refresh_enable" format="boolean" />
+        <attr name="refresh_threshold" format="dimension" />
     </declare-styleable>
 </resources>

@@ -8,6 +8,10 @@ import android.view.View;
 import com.wangzhen.refresh.RefreshLayout;
 import com.wangzhen.refresh.callback.RefreshCallback;
 
+/**
+ * MainActivity 刷新布局演示
+ * Created by wangzhen on 2019/3/26.
+ */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, RefreshCallback {
 
     private RefreshLayout refreshLayout;
