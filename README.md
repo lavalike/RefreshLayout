@@ -1,6 +1,9 @@
 # RefreshLayout
 > 支持任意View的刷新布局
 
+#### 引入
+> implementation 'com.wangzhen:refresh-layout:0.0.1'
+
 #### 属性介绍
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
