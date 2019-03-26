@@ -4,11 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import com.wangzhen.refresh.callback.HeaderAction;
+
 /**
  * HeaderView 抽象类
  * Created by wangzhen on 2019/3/26.
  */
-public abstract class HeaderView extends FrameLayout {
+public abstract class HeaderView extends FrameLayout implements HeaderAction {
 
     public HeaderView(Context context) {
         super(context);
@@ -22,13 +24,23 @@ public abstract class HeaderView extends FrameLayout {
         super(context, attrs, defStyleAttr);
     }
 
-    /**
-     * 执行刷新
-     */
-    public abstract void startRefresh();
+    @Override
+    public void onTriggerEnter() {
 
-    /**
-     * 刷新完成
-     */
-    public abstract void completeRefresh();
+    }
+
+    @Override
+    public void onTriggerExit() {
+
+    }
+
+    @Override
+    public void startRefresh() {
+
+    }
+
+    @Override
+    public void completeRefresh() {
+
+    }
 }

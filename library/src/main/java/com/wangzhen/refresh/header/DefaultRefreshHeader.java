@@ -10,21 +10,21 @@ import com.wangzhen.refresh.R;
  * RefreshHeader 头部刷新View
  * Created by wangzhen on 2019/3/26.
  */
-public class RefreshHeader extends HeaderView {
+public class DefaultRefreshHeader extends HeaderView {
 
     private TextView textView;
 
-    private String texts[] = new String[]{"下拉刷新", "正在刷新", "刷新完成"};
+    private String texts[] = new String[]{"下拉刷新", "释放刷新", "正在刷新", "刷新完成"};
 
-    public RefreshHeader(Context context) {
+    public DefaultRefreshHeader(Context context) {
         this(context, null);
     }
 
-    public RefreshHeader(Context context, AttributeSet attrs) {
+    public DefaultRefreshHeader(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public RefreshHeader(Context context, AttributeSet attrs, int defStyleAttr) {
+    public DefaultRefreshHeader(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         inflate(getContext(), R.layout.layout_refresh_header, this);
         textView = findViewById(R.id.tv_tip);
@@ -32,13 +32,23 @@ public class RefreshHeader extends HeaderView {
     }
 
     @Override
-    public void startRefresh() {
+    public void onTriggerEnter() {
         textView.setText(texts[1]);
     }
 
     @Override
-    public void completeRefresh() {
+    public void onTriggerExit() {
+        textView.setText(texts[0]);
+    }
+
+    @Override
+    public void startRefresh() {
         textView.setText(texts[2]);
+    }
+
+    @Override
+    public void completeRefresh() {
+        textView.setText(texts[3]);
         textView.postDelayed(new Runnable() {
             @Override
             public void run() {

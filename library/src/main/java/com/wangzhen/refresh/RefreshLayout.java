@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.wangzhen.refresh.callback.RefreshCallback;
+import com.wangzhen.refresh.header.DefaultRefreshHeader;
 import com.wangzhen.refresh.header.HeaderView;
-import com.wangzhen.refresh.header.RefreshHeader;
 import com.wangzhen.refresh.util.UIUtils;
 
 /**
@@ -71,7 +71,7 @@ public final class RefreshLayout extends LinearLayout {
      * 添加默认透明HeaderView
      */
     private void createDefaultHeader() {
-        mHeaderView = new RefreshHeader(getContext());
+        mHeaderView = new DefaultRefreshHeader(getContext());
         addView(mHeaderView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
     }
 
@@ -175,6 +175,11 @@ public final class RefreshLayout extends LinearLayout {
             case MotionEvent.ACTION_MOVE:
                 if (isDragging) {
                     changeHeaderHeight((int) deltaY);
+                    if (deltaY >= mRefreshThreshold) {
+                        mHeaderView.onTriggerEnter();
+                    } else {
+                        mHeaderView.onTriggerExit();
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
