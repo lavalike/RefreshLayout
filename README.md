@@ -2,7 +2,9 @@
 > 支持任意View的刷新布局
 
 #### 引入
-> implementation 'com.wangzhen:refresh-layout:0.0.2'
+```gradle
+implementation 'com.wangzhen:refresh-layout:0.0.2'
+```
 
 #### 属性介绍
 ```xml
