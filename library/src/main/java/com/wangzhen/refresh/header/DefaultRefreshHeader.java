@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.wangzhen.refresh.R;
 
 /**
- * RefreshHeader 头部刷新View
+ * 默认刷新Header
  * Created by wangzhen on 2019/3/26.
  */
 public class DefaultRefreshHeader extends HeaderView {
@@ -32,6 +32,11 @@ public class DefaultRefreshHeader extends HeaderView {
     }
 
     @Override
+    public void onScroll(float distance) {
+
+    }
+
+    @Override
     public void onTriggerEnter() {
         textView.setText(texts[1]);
     }
@@ -42,12 +47,12 @@ public class DefaultRefreshHeader extends HeaderView {
     }
 
     @Override
-    public void startRefresh() {
+    public void onRefresh() {
         textView.setText(texts[2]);
     }
 
     @Override
-    public void completeRefresh() {
+    public void onRefreshComplete() {
         textView.setText(texts[3]);
         textView.postDelayed(new Runnable() {
             @Override

@@ -25,6 +25,11 @@ public abstract class HeaderView extends FrameLayout implements HeaderAction {
     }
 
     @Override
+    public void onScroll(float distance) {
+
+    }
+
+    @Override
     public void onTriggerEnter() {
 
     }
@@ -35,12 +40,12 @@ public abstract class HeaderView extends FrameLayout implements HeaderAction {
     }
 
     @Override
-    public void startRefresh() {
+    public void onRefresh() {
 
     }
 
     @Override
-    public void completeRefresh() {
+    public void onRefreshComplete() {
 
     }
 }

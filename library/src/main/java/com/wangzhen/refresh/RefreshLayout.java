@@ -19,10 +19,12 @@ import com.wangzhen.refresh.util.UIUtils;
  * Created by wangzhen on 2019/3/26.
  */
 public final class RefreshLayout extends LinearLayout {
-    //默认拖动因子
+    //默认刷新因子
     private static final float DEFAULT_REFRESH_FACTOR = 0.3f;
     //动画执行时间
     private static final long DEFAULT_DURATION_TIME = 250L;
+    //HeaderView位置
+    private static final int POSITION_HEADER_VIEW = 0;
     //触发刷新阈值
     private int mRefreshThreshold;
     private float mRefreshFactor;
@@ -72,7 +74,7 @@ public final class RefreshLayout extends LinearLayout {
      */
     private void createDefaultHeader() {
         mHeaderView = new DefaultRefreshHeader(getContext());
-        addView(mHeaderView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        addView(mHeaderView, POSITION_HEADER_VIEW, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
     }
 
     /**
@@ -92,8 +94,8 @@ public final class RefreshLayout extends LinearLayout {
     public void setHeaderView(HeaderView header) {
         if (header != null) {
             this.mHeaderView = header;
-            removeViewAt(0);
-            addView(mHeaderView, 0, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+            removeViewAt(POSITION_HEADER_VIEW);
+            addView(mHeaderView, POSITION_HEADER_VIEW, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
         }
     }
 
@@ -116,17 +118,14 @@ public final class RefreshLayout extends LinearLayout {
     }
 
     /**
-     * 校验DragFactor的合法性
+     * 校验factor的合法性
      *
-     * @param factor 拖拽因子
-     * @return factor
+     * @param factor factor
+     * @return valid factor
      */
     private float validateFactor(float factor) {
-        if (factor < 0) {
+        if (factor < 0 || factor > 1) {
             factor = DEFAULT_REFRESH_FACTOR;
-        }
-        if (factor > 1) {
-            factor = 1;
         }
         return factor;
     }
@@ -180,6 +179,7 @@ public final class RefreshLayout extends LinearLayout {
                     } else {
                         mHeaderView.onTriggerExit();
                     }
+                    mHeaderView.onScroll(deltaY);
                 }
                 break;
             case MotionEvent.ACTION_UP:
@@ -187,7 +187,7 @@ public final class RefreshLayout extends LinearLayout {
                 if (isDragging) {
                     isDragging = false;
                     if (deltaY >= mRefreshThreshold) {
-                        mHeaderView.startRefresh();
+                        mHeaderView.onRefresh();
                         smoothChangeHeaderHeight((int) deltaY, mRefreshThreshold);
                         if (callback != null && !isRefreshing) {
                             callback.onRefresh();
@@ -242,30 +242,35 @@ public final class RefreshLayout extends LinearLayout {
         return mContentView != null && mContentView.canScrollVertically(-1);
     }
 
+    /**
+     * 设置刷新回调
+     *
+     * @param callback callback
+     */
     public void setRefreshCallback(RefreshCallback callback) {
         this.callback = callback;
     }
 
     /**
-     * 手动调用刷新
+     * 手动刷新
      */
     public void startRefresh() {
         if (!isRefreshing) {
             isDragging = true;
             isRefreshing = true;
-            mHeaderView.startRefresh();
+            mHeaderView.onRefresh();
             smoothChangeHeaderHeight(0, mRefreshThreshold);
         }
     }
 
     /**
-     * 手动结束刷新
+     * 结束刷新
      */
     public void refreshComplete() {
         if (isRefreshing) {
             isRefreshing = false;
             isDragging = false;
-            mHeaderView.completeRefresh();
+            mHeaderView.onRefreshComplete();
             smoothChangeHeaderHeight(mRefreshThreshold, 0);
         }
     }

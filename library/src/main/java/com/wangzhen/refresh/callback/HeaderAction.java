@@ -6,6 +6,13 @@ package com.wangzhen.refresh.callback;
  */
 public interface HeaderAction {
     /**
+     * 滑动
+     *
+     * @param distance 滑动距离 = 手指实际滑动距离 * factor
+     */
+    void onScroll(float distance);
+
+    /**
      * 到达刷新界限
      */
     void onTriggerEnter();
@@ -18,10 +25,10 @@ public interface HeaderAction {
     /**
      * 执行刷新
      */
-    void startRefresh();
+    void onRefresh();
 
     /**
      * 刷新完成
      */
-    void completeRefresh();
+    void onRefreshComplete();
 }
