@@ -3,7 +3,9 @@
 
 #### 引入
 ```gradle
-implementation 'com.wangzhen:refresh-layout:0.0.2'
+implementation('com.wangzhen:refresh-layout:0.0.4') {
+    transitive false
+}
 ```
 
 #### 属性介绍
