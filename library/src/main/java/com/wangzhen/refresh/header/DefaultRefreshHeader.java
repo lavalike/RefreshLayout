@@ -1,7 +1,6 @@
 package com.wangzhen.refresh.header;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.wangzhen.refresh.R;
@@ -17,16 +16,8 @@ public class DefaultRefreshHeader extends HeaderView {
     private String texts[] = new String[]{"下拉刷新", "释放刷新", "正在刷新", "刷新完成"};
 
     public DefaultRefreshHeader(Context context) {
-        this(context, null);
-    }
-
-    public DefaultRefreshHeader(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public DefaultRefreshHeader(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        inflate(getContext(), R.layout.layout_refresh_header, this);
+        super(context);
+        inflate(getContext(), R.layout.layout_refresh_default_header, this);
         textView = findViewById(R.id.tv_tip);
         textView.setText(texts[0]);
     }

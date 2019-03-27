@@ -38,11 +38,14 @@ public final class RefreshLayout extends LinearLayout {
     private HeaderView mHeaderView;
     //ContentView
     private View mContentView;
-
+    //下拉偏移量
     private float deltaY;
     private float lastX;
     private float lastY;
     private RefreshCallback callback;
+    //HeaderView高度
+    private int headerHeight;
+    private boolean run;
 
     public RefreshLayout(Context context) {
         this(context, null);
@@ -73,8 +76,7 @@ public final class RefreshLayout extends LinearLayout {
      * 添加默认透明HeaderView
      */
     private void createDefaultHeader() {
-        mHeaderView = new DefaultRefreshHeader(getContext());
-        addView(mHeaderView, POSITION_HEADER_VIEW, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+        addView(mHeaderView = new DefaultRefreshHeader(getContext()), POSITION_HEADER_VIEW, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
     /**
@@ -93,9 +95,8 @@ public final class RefreshLayout extends LinearLayout {
      */
     public void setHeaderView(HeaderView header) {
         if (header != null) {
-            this.mHeaderView = header;
             removeViewAt(POSITION_HEADER_VIEW);
-            addView(mHeaderView, POSITION_HEADER_VIEW, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+            addView(mHeaderView = header, POSITION_HEADER_VIEW, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }
 
@@ -142,6 +143,18 @@ public final class RefreshLayout extends LinearLayout {
     }
 
     @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+        if (!run) {
+            run = true;
+            headerHeight = mHeaderView.getHeight();
+            MarginLayoutParams params = (MarginLayoutParams) mHeaderView.getLayoutParams();
+            params.topMargin = -headerHeight;
+            mHeaderView.requestLayout();
+        }
+    }
+
+    @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (!isRefreshEnable) return super.onInterceptTouchEvent(ev);
         switch (ev.getAction()) {
@@ -173,7 +186,7 @@ public final class RefreshLayout extends LinearLayout {
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 if (isDragging) {
-                    changeHeaderHeight((int) deltaY);
+                    changeHeaderMargin((int) deltaY);
                     if (deltaY >= mRefreshThreshold) {
                         mHeaderView.onTriggerEnter();
                     } else {
@@ -188,13 +201,13 @@ public final class RefreshLayout extends LinearLayout {
                     isDragging = false;
                     if (deltaY >= mRefreshThreshold) {
                         mHeaderView.onRefresh();
-                        smoothChangeHeaderHeight((int) deltaY, mRefreshThreshold);
+                        smoothChangeHeaderMargin((int) deltaY, mRefreshThreshold);
                         if (callback != null && !isRefreshing) {
                             callback.onRefresh();
                         }
                         isRefreshing = true;
                     } else {
-                        smoothChangeHeaderHeight((int) deltaY, 0);
+                        smoothChangeHeaderMargin((int) deltaY, 0);
                         isRefreshing = false;
                     }
                 }
@@ -204,19 +217,19 @@ public final class RefreshLayout extends LinearLayout {
     }
 
     /**
-     * 将HeaderView高度从start平滑变化到end
+     * 平滑改变Header的margin
      *
      * @param start start
      * @param end   end
      */
-    private void smoothChangeHeaderHeight(int start, int end) {
+    private void smoothChangeHeaderMargin(int start, int end) {
         if (start < 0) start = 0;
         if (end < 0) end = 0;
         ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
-                changeHeaderHeight((int) animation.getAnimatedValue());
+                changeHeaderMargin((int) animation.getAnimatedValue());
             }
         });
         valueAnimator.setDuration(DEFAULT_DURATION_TIME);
@@ -224,14 +237,14 @@ public final class RefreshLayout extends LinearLayout {
     }
 
     /**
-     * 改变HeaderView的高度
+     * 改变HeaderView的topMargin
      *
-     * @param height 高度
+     * @param topMargin toMargin
      */
-    private void changeHeaderHeight(int height) {
-        if (height < 0) height = 0;
-        ViewGroup.LayoutParams layoutParams = mHeaderView.getLayoutParams();
-        layoutParams.height = height;
+    private void changeHeaderMargin(int topMargin) {
+        if (topMargin < 0) topMargin = 0;
+        MarginLayoutParams layoutParams = (MarginLayoutParams) mHeaderView.getLayoutParams();
+        layoutParams.topMargin = topMargin - headerHeight;
         mHeaderView.requestLayout();
     }
 
@@ -259,7 +272,7 @@ public final class RefreshLayout extends LinearLayout {
             isDragging = true;
             isRefreshing = true;
             mHeaderView.onRefresh();
-            smoothChangeHeaderHeight(0, mRefreshThreshold);
+            smoothChangeHeaderMargin(0, mRefreshThreshold);
         }
     }
 
@@ -271,7 +284,7 @@ public final class RefreshLayout extends LinearLayout {
             isRefreshing = false;
             isDragging = false;
             mHeaderView.onRefreshComplete();
-            smoothChangeHeaderHeight(mRefreshThreshold, 0);
+            smoothChangeHeaderMargin(mRefreshThreshold, 0);
         }
     }
 }
