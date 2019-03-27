@@ -4,7 +4,7 @@ apply plugin: 'com.novoda.bintray-release'
 android {
     compileSdkVersion 28
     defaultConfig {
-        minSdkVersion 19
+        minSdkVersion 17
         targetSdkVersion 28
     }
 
@@ -17,15 +17,17 @@ android {
 
 }
 
+def SUPPORT_VERSION = "28.0.0"
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:' + SUPPORT_VERSION
 }
 
 publish {
     userOrg = 'lavalike'//bintray.com用户名
     groupId = 'com.wangzhen'//jcenter上的路径
     artifactId = 'refresh-layout'//项目名称
-    publishVersion = '0.0.3'
+    publishVersion = '0.0.4'
     desc = '支持任意View的刷新布局'
     website = 'https://github.com/lavalike/RefreshLayout'
 }

@@ -3,6 +3,7 @@ package com.wangzhen.refresh;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -182,12 +183,18 @@ public final class RefreshLayout extends LinearLayout {
         return super.onInterceptTouchEvent(ev);
     }
 
+    /**
+     * 详见{@link android.support.v4.widget.SwipeRefreshLayout#requestDisallowInterceptTouchEvent(boolean)}
+     *
+     * @param disallowIntercept disallowIntercept
+     */
     @Override
     public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
         // if this is a List < L or another view that doesn't support nested
         // scrolling, ignore this request so that the vertical scroll event
         // isn't stolen
         if ((android.os.Build.VERSION.SDK_INT < 21 && mContentView instanceof AbsListView)
+                || ViewCompat.isNestedScrollingEnabled(mContentView)
                 || isCanPullDown()) {
             // Nope.
         } else {
