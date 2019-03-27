@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.LinearLayout;
 
 import com.wangzhen.refresh.callback.RefreshCallback;
@@ -156,7 +157,8 @@ public final class RefreshLayout extends LinearLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!isRefreshEnable) return super.onInterceptTouchEvent(ev);
+        if (!isRefreshEnable || isRefreshing)
+            return false;
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastX = ev.getX();
@@ -178,6 +180,19 @@ public final class RefreshLayout extends LinearLayout {
                 break;
         }
         return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+        // if this is a List < L or another view that doesn't support nested
+        // scrolling, ignore this request so that the vertical scroll event
+        // isn't stolen
+        if ((android.os.Build.VERSION.SDK_INT < 21 && mContentView instanceof AbsListView)
+                || isCanPullDown()) {
+            // Nope.
+        } else {
+            super.requestDisallowInterceptTouchEvent(disallowIntercept);
+        }
     }
 
     @Override
