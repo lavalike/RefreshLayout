@@ -38,8 +38,6 @@ public final class RefreshLayout extends LinearLayout {
     private int mRefreshThreshold;
     //刷新因子
     private float mRefreshFactor;
-    //是否正在拖动
-    private boolean isDragging = false;
     //是否正在刷新
     private boolean isRefreshing = false;
     //是否启用下拉刷新
@@ -55,6 +53,7 @@ public final class RefreshLayout extends LinearLayout {
     private OnRefreshCallback callback;
     //HeaderView高度
     private int headerHeight;
+    //是否获取过HeaderView的高度
     private boolean run;
 
     public RefreshLayout(Context context) {
@@ -78,7 +77,6 @@ public final class RefreshLayout extends LinearLayout {
 
     private void init() {
         setOrientation(VERTICAL);
-        isDragging = false;
         isRefreshing = false;
         //添加默认Header
         setHeaderView(new DefaultRefreshHeader(getContext()));
@@ -176,7 +174,6 @@ public final class RefreshLayout extends LinearLayout {
                 float diffX = ev.getX() - lastX;
                 float diffY = ev.getY() - lastY;
                 if (diffY > 0 && diffY > Math.abs(diffX)) {
-                    isDragging = true;
                     return true;
                 }
                 break;
@@ -208,31 +205,26 @@ public final class RefreshLayout extends LinearLayout {
         deltaY = (event.getY() - lastY) * mRefreshFactor;
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
-                if (isDragging) {
-                    changeHeaderMargin((int) deltaY);
-                    if (deltaY >= mRefreshThreshold) {
-                        mHeaderView.onTriggerEnter();
-                    } else {
-                        mHeaderView.onTriggerExit();
-                    }
-                    mHeaderView.onScroll(deltaY);
+                changeHeaderMargin((int) deltaY);
+                if (deltaY >= mRefreshThreshold) {
+                    mHeaderView.onTriggerEnter();
+                } else {
+                    mHeaderView.onTriggerExit();
                 }
+                mHeaderView.onScroll(deltaY);
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                if (isDragging) {
-                    isDragging = false;
-                    if (deltaY >= mRefreshThreshold) {
-                        mHeaderView.onRefresh();
-                        smoothChangeHeaderMargin((int) deltaY, mRefreshThreshold);
-                        if (callback != null && !isRefreshing) {
-                            callback.onRefresh();
-                        }
-                        isRefreshing = true;
-                    } else {
-                        smoothChangeHeaderMargin((int) deltaY, 0);
-                        isRefreshing = false;
+                if (deltaY >= mRefreshThreshold) {
+                    isRefreshing = true;
+                    mHeaderView.onRefresh();
+                    smoothChangeHeaderMargin((int) deltaY, mRefreshThreshold);
+                    if (callback != null) {
+                        callback.onRefresh();
                     }
+                } else {
+                    isRefreshing = false;
+                    smoothChangeHeaderMargin((int) deltaY, 0);
                 }
                 break;
         }
@@ -303,7 +295,6 @@ public final class RefreshLayout extends LinearLayout {
      */
     public void startRefresh() {
         if (!isRefreshing) {
-            isDragging = true;
             isRefreshing = true;
             mHeaderView.onRefresh();
             smoothChangeHeaderMargin(0, mRefreshThreshold);
@@ -319,7 +310,6 @@ public final class RefreshLayout extends LinearLayout {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    isDragging = false;
                     isRefreshing = false;
                     smoothChangeHeaderMargin(mRefreshThreshold, 0);
                 }
