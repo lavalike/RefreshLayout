@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.wangzhen.refresh.RefreshLayout;
-import com.wangzhen.refresh.callback.RefreshCallback;
+import com.wangzhen.refresh.callback.OnRefreshCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
  * RecyclerActivity
  * Created by wangzhen on 2019/2/22.
  */
-public class RecyclerActivity extends AppCompatActivity implements RefreshCallback {
+public class RecyclerActivity extends AppCompatActivity implements OnRefreshCallback {
 
     private RefreshLayout refreshLayout;
 
@@ -29,7 +29,7 @@ public class RecyclerActivity extends AppCompatActivity implements RefreshCallba
         setContentView(R.layout.activity_recycler);
         setTitle("RecyclerView示例");
         refreshLayout = findViewById(R.id.refresh);
-        refreshLayout.setRefreshCallback(this);
+        refreshLayout.setOnRefreshCallback(this);
         RecyclerView recyclerView = findViewById(R.id.recycler);
         List<Integer> list = new ArrayList<>();
         for (int i = 0; i < 20; i++) {

@@ -1,9 +1,9 @@
 package com.wangzhen.refresh.callback;
 
 /**
- * RefreshCallback
+ * OnRefreshCallback
  * Created by wangzhen on 2019/3/26.
  */
-public interface RefreshCallback {
+public interface OnRefreshCallback {
     void onRefresh();
 }

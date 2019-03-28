@@ -11,7 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.wangzhen.refresh.RefreshLayout;
-import com.wangzhen.refresh.callback.RefreshCallback;
+import com.wangzhen.refresh.callback.OnRefreshCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.List;
  * ListActivity
  * Created by wangzhen on 2019/3/27.
  */
-public class ListActivity extends AppCompatActivity implements RefreshCallback {
+public class ListActivity extends AppCompatActivity implements OnRefreshCallback {
 
     private ListView listView;
     private RefreshLayout refreshLayout;
@@ -31,7 +31,7 @@ public class ListActivity extends AppCompatActivity implements RefreshCallback {
         setContentView(R.layout.activity_list);
         setTitle("ListView示例");
         refreshLayout = findViewById(R.id.refresh);
-        refreshLayout.setRefreshCallback(this);
+        refreshLayout.setOnRefreshCallback(this);
         listView = findViewById(R.id.list);
 
         List<Integer> list = new ArrayList<>();

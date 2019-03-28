@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.wangzhen.refresh.RefreshLayout;
-import com.wangzhen.refresh.callback.RefreshCallback;
+import com.wangzhen.refresh.callback.OnRefreshCallback;
 
 /**
  * ScrollActivity
  * Created by wangzhen on 2019/2/22.
  */
-public class ScrollActivity extends AppCompatActivity implements RefreshCallback, View.OnClickListener {
+public class ScrollActivity extends AppCompatActivity implements OnRefreshCallback, View.OnClickListener {
 
     private RefreshLayout refreshLayout;
 
@@ -22,7 +22,7 @@ public class ScrollActivity extends AppCompatActivity implements RefreshCallback
         setContentView(R.layout.activity_scroll);
         setTitle("ScrollView示例");
         refreshLayout = findViewById(R.id.refresh);
-        refreshLayout.setRefreshCallback(this);
+        refreshLayout.setOnRefreshCallback(this);
         findViewById(R.id.btn_start).setOnClickListener(this);
         findViewById(R.id.btn_stop).setOnClickListener(this);
     }

@@ -13,22 +13,27 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 
-import com.wangzhen.refresh.callback.RefreshCallback;
+import com.wangzhen.refresh.callback.OnRefreshCallback;
 import com.wangzhen.refresh.header.DefaultRefreshHeader;
 import com.wangzhen.refresh.header.HeaderView;
 import com.wangzhen.refresh.util.UIUtils;
+
+import static com.wangzhen.refresh.common.C.DEFAULT_COLLAPSE_DELAY;
+import static com.wangzhen.refresh.common.C.DEFAULT_DURATION_TIME;
+import static com.wangzhen.refresh.common.C.DEFAULT_HEADER_POSITION;
+import static com.wangzhen.refresh.common.C.DEFAULT_REFRESH_FACTOR;
+import static com.wangzhen.refresh.util.ValidatorUtils.validateCollapseDelay;
+import static com.wangzhen.refresh.util.ValidatorUtils.validateFactor;
 
 /**
  * 下拉刷新布局 RefreshLayout
  * Created by wangzhen on 2019/3/26.
  */
 public final class RefreshLayout extends LinearLayout {
-    //默认刷新因子
-    private static final float DEFAULT_REFRESH_FACTOR = 0.3f;
-    //动画执行时间
-    private static final long DEFAULT_DURATION_TIME = 250L;
-    //HeaderView位置
-    private static final int POSITION_HEADER_VIEW = 0;
+    //HeaderView
+    private HeaderView mHeaderView;
+    //ContentView
+    private View mContentView;
     //触发刷新阈值
     private int mRefreshThreshold;
     //刷新因子
@@ -41,15 +46,13 @@ public final class RefreshLayout extends LinearLayout {
     private boolean isRefreshEnable;
     //动画是否正在执行
     private boolean isAnimating = false;
-    //HeaderView
-    private HeaderView mHeaderView;
-    //ContentView
-    private View mContentView;
+    //刷新结束关闭动画延迟时间，单位:ms
+    private int mCollapseDelay;
     //下拉偏移量
     private float deltaY;
     private float lastX;
     private float lastY;
-    private RefreshCallback callback;
+    private OnRefreshCallback callback;
     //HeaderView高度
     private int headerHeight;
     private boolean run;
@@ -68,6 +71,7 @@ public final class RefreshLayout extends LinearLayout {
         mRefreshFactor = validateFactor(typedArray.getFloat(R.styleable.RefreshLayout_refresh_factor, DEFAULT_REFRESH_FACTOR));
         isRefreshEnable = typedArray.getBoolean(R.styleable.RefreshLayout_refresh_enable, true);
         mRefreshThreshold = (int) typedArray.getDimension(R.styleable.RefreshLayout_refresh_threshold, UIUtils.dp2px(getContext(), 48));
+        mCollapseDelay = validateCollapseDelay(typedArray.getInteger(R.styleable.RefreshLayout_refresh_collapse_delay, DEFAULT_COLLAPSE_DELAY));
         typedArray.recycle();
         init();
     }
@@ -76,23 +80,8 @@ public final class RefreshLayout extends LinearLayout {
         setOrientation(VERTICAL);
         isDragging = false;
         isRefreshing = false;
-        createDefaultHeader();
-    }
-
-    /**
-     * 添加默认透明HeaderView
-     */
-    private void createDefaultHeader() {
-        addView(mHeaderView = new DefaultRefreshHeader(getContext()), POSITION_HEADER_VIEW, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-    }
-
-    /**
-     * 设置是否启用下拉刷新
-     *
-     * @param enable enable
-     */
-    public void setRefreshEnable(boolean enable) {
-        this.isRefreshEnable = enable;
+        //添加默认Header
+        setHeaderView(new DefaultRefreshHeader(getContext()));
     }
 
     /**
@@ -102,9 +91,20 @@ public final class RefreshLayout extends LinearLayout {
      */
     public void setHeaderView(HeaderView header) {
         if (header != null) {
-            removeViewAt(POSITION_HEADER_VIEW);
-            addView(mHeaderView = header, POSITION_HEADER_VIEW, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            if (getChildAt(DEFAULT_HEADER_POSITION) != null)
+                removeViewAt(DEFAULT_HEADER_POSITION);
+            header.setCollapseDelay(mCollapseDelay);
+            addView(mHeaderView = header, DEFAULT_HEADER_POSITION, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
+    }
+
+    /**
+     * 设置是否启用下拉刷新
+     *
+     * @param enable enable
+     */
+    public void setRefreshEnable(boolean enable) {
+        this.isRefreshEnable = enable;
     }
 
     /**
@@ -126,16 +126,13 @@ public final class RefreshLayout extends LinearLayout {
     }
 
     /**
-     * 校验factor的合法性
+     * 设置延迟关闭时间
      *
-     * @param factor factor
-     * @return valid factor
+     * @param delay delay
      */
-    private float validateFactor(float factor) {
-        if (factor < 0 || factor > 1) {
-            factor = DEFAULT_REFRESH_FACTOR;
-        }
-        return factor;
+    public void setCollapseDelay(int delay) {
+        this.mCollapseDelay = validateCollapseDelay(delay);
+        mHeaderView.setCollapseDelay(mCollapseDelay);
     }
 
     @Override
@@ -299,7 +296,7 @@ public final class RefreshLayout extends LinearLayout {
      *
      * @param callback callback
      */
-    public void setRefreshCallback(RefreshCallback callback) {
+    public void setOnRefreshCallback(OnRefreshCallback callback) {
         this.callback = callback;
     }
 
@@ -320,10 +317,15 @@ public final class RefreshLayout extends LinearLayout {
      */
     public void refreshComplete() {
         if (isRefreshing) {
-            isRefreshing = false;
-            isDragging = false;
             mHeaderView.onRefreshComplete();
-            smoothChangeHeaderMargin(mRefreshThreshold, 0);
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isDragging = false;
+                    isRefreshing = false;
+                    smoothChangeHeaderMargin(mRefreshThreshold, 0);
+                }
+            }, mCollapseDelay);
         }
     }
 }

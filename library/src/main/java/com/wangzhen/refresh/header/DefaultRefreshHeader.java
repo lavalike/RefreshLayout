@@ -19,6 +19,10 @@ public class DefaultRefreshHeader extends HeaderView {
         super(context);
         inflate(getContext(), R.layout.layout_refresh_default_header, this);
         textView = findViewById(R.id.tv_tip);
+        init();
+    }
+
+    private void init() {
         textView.setText(texts[0]);
     }
 
@@ -34,7 +38,7 @@ public class DefaultRefreshHeader extends HeaderView {
 
     @Override
     public void onTriggerExit() {
-        textView.setText(texts[0]);
+        init();
     }
 
     @Override
@@ -48,9 +52,9 @@ public class DefaultRefreshHeader extends HeaderView {
         textView.postDelayed(new Runnable() {
             @Override
             public void run() {
-                textView.setText(texts[0]);
+                init();
             }
-        }, 200);
+        }, 200 + collapseDelay);
     }
 
 }

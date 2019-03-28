@@ -4,5 +4,6 @@
         <attr name="refresh_factor" format="float" />
         <attr name="refresh_enable" format="boolean" />
         <attr name="refresh_threshold" format="dimension" />
+        <attr name="refresh_collapse_delay" format="integer" />
     </declare-styleable>
 </resources>

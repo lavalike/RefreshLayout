@@ -11,8 +11,20 @@ import com.wangzhen.refresh.callback.HeaderAction;
  */
 public abstract class HeaderView extends FrameLayout implements HeaderAction {
 
+    //刷新结束关闭延迟时间
+    protected int collapseDelay;
+
     public HeaderView(Context context) {
         super(context);
+    }
+
+    /**
+     * 设置延迟关闭时间
+     *
+     * @param collapseDelay delay
+     */
+    public void setCollapseDelay(int collapseDelay) {
+        this.collapseDelay = collapseDelay;
     }
 
     @Override
