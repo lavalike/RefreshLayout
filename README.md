@@ -1,11 +1,12 @@
 # RefreshLayout
-> 支持任意View的刷新布局
 
 [![Platform](https://img.shields.io/badge/Platform-Android-00CC00.svg?style=flat)](https://www.android.com)
 [![Jcenter](https://img.shields.io/badge/jcenter-RefreshLayout-red.svg?style=flat)](http://jcenter.bintray.com/com/wangzhen/refresh-layout/)
 [![Download](https://api.bintray.com/packages/lavalike/maven/refresh-layout/images/download.svg) ](https://bintray.com/lavalike/maven/refresh-layout/_latestVersion)
 [![API](https://img.shields.io/badge/API-17%2B-00CC00.svg?style=flat)](https://android-arsenal.com/api?level=17)
 [![License](https://img.shields.io/badge/License-Apache%202-337ab7.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)
+
+> 支持任意View的刷新布局
 
 #### 引入
 ```gradle
