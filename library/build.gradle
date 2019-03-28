@@ -27,7 +27,7 @@ publish {
     userOrg = 'lavalike'//bintray.com用户名
     groupId = 'com.wangzhen'//jcenter上的路径
     artifactId = 'refresh-layout'//项目名称
-    publishVersion = '0.0.4'
+    publishVersion = '0.0.5'
     desc = '支持任意View的刷新布局'
     website = 'https://github.com/lavalike/RefreshLayout'
 }
