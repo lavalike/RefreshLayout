@@ -41,7 +41,7 @@ implementation('com.wangzhen:refresh-layout:0.0.5') {
 #### Java配置
 ```java
 //1、设置刷新回调
-refreshLayout.setRefreshCallback(new RefreshCallback() {
+refreshLayout.setOnRefreshCallback(new OnRefreshCallback() {
             @Override
             public void onRefresh() {
                 new Handler().postDelayed(new Runnable() {
