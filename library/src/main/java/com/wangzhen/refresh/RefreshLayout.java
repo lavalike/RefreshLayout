@@ -1,5 +1,7 @@
 package com.wangzhen.refresh;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -29,6 +31,7 @@ public final class RefreshLayout extends LinearLayout {
     private static final int POSITION_HEADER_VIEW = 0;
     //触发刷新阈值
     private int mRefreshThreshold;
+    //刷新因子
     private float mRefreshFactor;
     //是否正在拖动
     private boolean isDragging = false;
@@ -36,6 +39,8 @@ public final class RefreshLayout extends LinearLayout {
     private boolean isRefreshing = false;
     //是否启用下拉刷新
     private boolean isRefreshEnable;
+    //动画是否正在执行
+    private boolean isAnimating = false;
     //HeaderView
     private HeaderView mHeaderView;
     //ContentView
@@ -158,8 +163,9 @@ public final class RefreshLayout extends LinearLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (!isRefreshEnable || isRefreshing)
-            return false;
+        if (!isRefreshEnable || isRefreshing || isAnimating) {
+            return super.onInterceptTouchEvent(ev);
+        }
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 lastX = ev.getX();
@@ -252,6 +258,17 @@ public final class RefreshLayout extends LinearLayout {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 changeHeaderMargin((int) animation.getAnimatedValue());
+            }
+        });
+        valueAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                isAnimating = false;
+            }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                isAnimating = true;
             }
         });
         valueAnimator.setDuration(DEFAULT_DURATION_TIME);
