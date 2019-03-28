@@ -93,7 +93,6 @@ public final class RefreshLayout extends LinearLayout {
         if (header != null) {
             if (getChildAt(DEFAULT_HEADER_POSITION) != null)
                 removeViewAt(DEFAULT_HEADER_POSITION);
-            header.setCollapseDelay(mCollapseDelay);
             addView(mHeaderView = header, DEFAULT_HEADER_POSITION, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }
@@ -132,7 +131,6 @@ public final class RefreshLayout extends LinearLayout {
      */
     public void setCollapseDelay(int delay) {
         this.mCollapseDelay = validateCollapseDelay(delay);
-        mHeaderView.setCollapseDelay(mCollapseDelay);
     }
 
     @Override

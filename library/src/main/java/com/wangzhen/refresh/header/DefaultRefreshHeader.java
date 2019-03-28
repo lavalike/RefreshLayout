@@ -49,12 +49,6 @@ public class DefaultRefreshHeader extends HeaderView {
     @Override
     public void onRefreshComplete() {
         textView.setText(texts[3]);
-        textView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                init();
-            }
-        }, 200 + collapseDelay);
     }
 
 }
