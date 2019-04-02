@@ -14,6 +14,7 @@ import android.widget.AbsListView;
 import android.widget.LinearLayout;
 
 import com.wangzhen.refresh.callback.OnRefreshCallback;
+import com.wangzhen.refresh.common.C;
 import com.wangzhen.refresh.header.DefaultRefreshHeader;
 import com.wangzhen.refresh.header.HeaderView;
 import com.wangzhen.refresh.util.UIUtils;
@@ -322,13 +323,18 @@ public final class RefreshLayout extends LinearLayout {
     public void refreshComplete() {
         if (isRefreshing) {
             mHeaderView.onRefreshComplete();
+            int delay = mCollapseDelay;
+            if (mHoverOffset > 0) {
+                //当设置了悬停偏移，关闭动画延迟需要加上偏移动画执行时间
+                delay += C.DEFAULT_OFFSET_DURATION;
+            }
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     isRefreshing = false;
                     smoothChangeHeaderMargin(mRefreshThreshold - mHoverOffset, 0);
                 }
-            }, mCollapseDelay);
+            }, delay);
         }
     }
 }

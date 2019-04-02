@@ -9,6 +9,8 @@ public class C {
     public static final float DEFAULT_REFRESH_FACTOR = 0.3f;
     //默认动画执行时间
     public static final long DEFAULT_DURATION_TIME = 250L;
+    //默认悬停动画执行时间
+    public static final long DEFAULT_OFFSET_DURATION = 100L;
     //HeaderView位置
     public static final int DEFAULT_HEADER_POSITION = 0;
     //默认延迟关闭时间 ms

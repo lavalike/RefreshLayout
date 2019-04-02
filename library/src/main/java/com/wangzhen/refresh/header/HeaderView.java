@@ -5,6 +5,7 @@ import android.content.Context;
 import android.widget.FrameLayout;
 
 import com.wangzhen.refresh.callback.HeaderAction;
+import com.wangzhen.refresh.common.C;
 
 /**
  * HeaderView 抽象类
@@ -47,6 +48,11 @@ public abstract class HeaderView extends FrameLayout implements HeaderAction {
 
     }
 
+    /**
+     * <p>
+     * 继承HeaderView时请确保调用{@code super.onRefreshComplete()}
+     * </p>
+     */
     @Override
     public void onRefreshComplete() {
         animOffset();
@@ -67,7 +73,7 @@ public abstract class HeaderView extends FrameLayout implements HeaderAction {
                 requestLayout();
             }
         });
-        animator.setDuration(100);
+        animator.setDuration(C.DEFAULT_OFFSET_DURATION);
         animator.start();
     }
 }
