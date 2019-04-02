@@ -10,7 +10,7 @@
 
 #### 引入
 ```gradle
-implementation('com.wangzhen:refresh-layout:0.0.6') {
+implementation('com.wangzhen:refresh-layout:0.0.7') {
     transitive false
 }
 ```
@@ -26,6 +26,8 @@ implementation('com.wangzhen:refresh-layout:0.0.6') {
         <attr name="refresh_enable" format="boolean" />
         <!-- 下拉刷新阈值，默认48dp -->
         <attr name="refresh_threshold" format="dimension" />
+        <!-- 悬停偏移量，默认0dp-->
+        <attr name="refresh_hover_offset" format="dimension" />
         <!-- 刷新完毕延迟关闭时间，默认300ms-->
         <attr name="refresh_collapse_delay" format="integer" />
     </declare-styleable>
@@ -41,6 +43,7 @@ implementation('com.wangzhen:refresh-layout:0.0.6') {
     app:refresh_enable="true"
     app:refresh_factor="0.3"
     app:refresh_threshold="48dp"
+    app:refresh_hover_offset="24dp"
     app:refresh_collapse_delay="300">
 </com.wangzhen.refresh.RefreshLayout>
 ```
@@ -69,8 +72,10 @@ refreshLayout.setRefreshFactor(0.3f);
 refreshLayout.setHeaderView(view extends HeaderView);
 //6、设置刷新完毕延迟关闭时间，默认300ms
 refreshLayout.setCollapseDelay(300);
-//7、手动刷新
+//7、设置悬停偏移量
+refreshLayout.setHoverOffset(50);
+//8、手动刷新
 refreshLayout.startRefresh();
-//8、刷新完成
+//9、刷新完成
 refreshLayout.refreshComplete();
 ```

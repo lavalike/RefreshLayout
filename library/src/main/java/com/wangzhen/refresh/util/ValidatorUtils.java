@@ -32,4 +32,16 @@ public class ValidatorUtils {
             delay = C.DEFAULT_COLLAPSE_DELAY;
         return delay;
     }
+
+    /**
+     * 校验偏移量
+     *
+     * @param offset offset
+     * @return offset
+     */
+    public static int validateOffset(int offset) {
+        if (offset < 0)
+            offset = 0;
+        return offset;
+    }
 }

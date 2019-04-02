@@ -24,6 +24,7 @@ import static com.wangzhen.refresh.common.C.DEFAULT_HEADER_POSITION;
 import static com.wangzhen.refresh.common.C.DEFAULT_REFRESH_FACTOR;
 import static com.wangzhen.refresh.util.ValidatorUtils.validateCollapseDelay;
 import static com.wangzhen.refresh.util.ValidatorUtils.validateFactor;
+import static com.wangzhen.refresh.util.ValidatorUtils.validateOffset;
 
 /**
  * 下拉刷新布局 RefreshLayout
@@ -38,6 +39,8 @@ public final class RefreshLayout extends LinearLayout {
     private int mRefreshThreshold;
     //刷新因子
     private float mRefreshFactor;
+    //刷新提示偏移量
+    private int mHoverOffset;
     //是否正在刷新
     private boolean isRefreshing = false;
     //是否启用下拉刷新
@@ -52,7 +55,7 @@ public final class RefreshLayout extends LinearLayout {
     private float lastY;
     private OnRefreshCallback callback;
     //HeaderView高度
-    private int headerHeight;
+    private int mHeaderHeight;
     //是否获取过HeaderView的高度
     private boolean run;
 
@@ -70,6 +73,7 @@ public final class RefreshLayout extends LinearLayout {
         mRefreshFactor = validateFactor(typedArray.getFloat(R.styleable.RefreshLayout_refresh_factor, DEFAULT_REFRESH_FACTOR));
         isRefreshEnable = typedArray.getBoolean(R.styleable.RefreshLayout_refresh_enable, true);
         mRefreshThreshold = (int) typedArray.getDimension(R.styleable.RefreshLayout_refresh_threshold, UIUtils.dp2px(getContext(), 48));
+        mHoverOffset = validateOffset((int) typedArray.getDimension(R.styleable.RefreshLayout_refresh_hover_offset, 0));
         mCollapseDelay = validateCollapseDelay(typedArray.getInteger(R.styleable.RefreshLayout_refresh_collapse_delay, DEFAULT_COLLAPSE_DELAY));
         typedArray.recycle();
         init();
@@ -89,6 +93,7 @@ public final class RefreshLayout extends LinearLayout {
      */
     public void setHeaderView(HeaderView header) {
         if (header != null) {
+            header.setHoverOffset(mHoverOffset);
             if (getChildAt(DEFAULT_HEADER_POSITION) != null)
                 removeViewAt(DEFAULT_HEADER_POSITION);
             addView(mHeaderView = header, DEFAULT_HEADER_POSITION, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -123,6 +128,16 @@ public final class RefreshLayout extends LinearLayout {
     }
 
     /**
+     * 设置悬停偏移量
+     *
+     * @param offset offset
+     */
+    public void setHoverOffset(int offset) {
+        this.mHoverOffset = validateOffset(offset);
+        mHeaderView.setHoverOffset(mHoverOffset);
+    }
+
+    /**
      * 设置延迟关闭时间
      *
      * @param delay delay
@@ -147,9 +162,9 @@ public final class RefreshLayout extends LinearLayout {
         super.onLayout(changed, l, t, r, b);
         if (!run) {
             run = true;
-            headerHeight = mHeaderView.getHeight();
+            mHeaderHeight = mHeaderView.getHeight();
             MarginLayoutParams params = (MarginLayoutParams) mHeaderView.getLayoutParams();
-            params.topMargin = -headerHeight;
+            params.topMargin = -mHeaderHeight;
             mHeaderView.requestLayout();
         }
     }
@@ -270,7 +285,7 @@ public final class RefreshLayout extends LinearLayout {
     private void changeHeaderMargin(int topMargin) {
         if (topMargin < 0) topMargin = 0;
         MarginLayoutParams layoutParams = (MarginLayoutParams) mHeaderView.getLayoutParams();
-        layoutParams.topMargin = topMargin - headerHeight;
+        layoutParams.topMargin = topMargin - mHeaderHeight;
         mHeaderView.requestLayout();
     }
 
@@ -311,7 +326,7 @@ public final class RefreshLayout extends LinearLayout {
                 @Override
                 public void run() {
                     isRefreshing = false;
-                    smoothChangeHeaderMargin(mRefreshThreshold, 0);
+                    smoothChangeHeaderMargin(mRefreshThreshold - mHoverOffset, 0);
                 }
             }, mCollapseDelay);
         }

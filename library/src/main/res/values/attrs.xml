@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RefreshLayout">
+        <!-- 下拉阻尼值，0~1，默认0.3 -->
         <attr name="refresh_factor" format="float" />
+        <!-- 是否启用下拉刷新，默认true -->
         <attr name="refresh_enable" format="boolean" />
+        <!-- 下拉刷新阈值，默认48dp -->
         <attr name="refresh_threshold" format="dimension" />
+        <!-- 悬停偏移量，默认0dp-->
+        <attr name="refresh_hover_offset" format="dimension" />
+        <!-- 刷新完毕延迟关闭时间，默认300ms-->
         <attr name="refresh_collapse_delay" format="integer" />
     </declare-styleable>
 </resources>

@@ -48,6 +48,7 @@ public class DefaultRefreshHeader extends HeaderView {
 
     @Override
     public void onRefreshComplete() {
+        super.onRefreshComplete();
         textView.setText(texts[3]);
     }
 
