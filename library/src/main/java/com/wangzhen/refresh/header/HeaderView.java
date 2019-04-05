@@ -1,11 +1,9 @@
 package com.wangzhen.refresh.header;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.widget.FrameLayout;
 
 import com.wangzhen.refresh.callback.HeaderAction;
-import com.wangzhen.refresh.common.C;
 
 /**
  * HeaderView 抽象类
@@ -55,25 +53,16 @@ public abstract class HeaderView extends FrameLayout implements HeaderAction {
      */
     @Override
     public void onRefreshComplete() {
-        animOffset();
+        offset();
     }
 
     /**
      * 改变topMargin偏移量
      */
-    private void animOffset() {
+    private void offset() {
         if (mHoverOffset <= 0) return;
-        final MarginLayoutParams params = (MarginLayoutParams) getLayoutParams();
-        int start = params.topMargin;
-        ValueAnimator animator = ValueAnimator.ofInt(start, start - mHoverOffset);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                params.topMargin = (int) animation.getAnimatedValue();
-                requestLayout();
-            }
-        });
-        animator.setDuration(C.DEFAULT_OFFSET_DURATION);
-        animator.start();
+        MarginLayoutParams params = (MarginLayoutParams) getLayoutParams();
+        params.topMargin -= mHoverOffset;
+        requestLayout();
     }
 }
