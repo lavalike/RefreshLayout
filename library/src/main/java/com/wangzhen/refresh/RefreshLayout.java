@@ -146,6 +146,33 @@ public final class RefreshLayout extends LinearLayout {
         this.mCollapseDelay = validateCollapseDelay(delay);
     }
 
+    /**
+     * 是否正在刷新
+     *
+     * @return isRefreshing
+     */
+    public boolean isRefreshing() {
+        return isRefreshing;
+    }
+
+    /**
+     * 刷新是否启用
+     *
+     * @return isRefreshEnable
+     */
+    public boolean isRefreshEnable() {
+        return isRefreshEnable;
+    }
+
+    /**
+     * 动画是否正在执行
+     *
+     * @return isAnimatings
+     */
+    public boolean isAnimating() {
+        return isAnimating;
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();

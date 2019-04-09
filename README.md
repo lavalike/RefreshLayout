@@ -10,7 +10,7 @@
 
 #### 引入
 ```gradle
-implementation('com.wangzhen:refresh-layout:0.0.8') {
+implementation('com.wangzhen:refresh-layout:0.0.9') {
     transitive false
 }
 ```
