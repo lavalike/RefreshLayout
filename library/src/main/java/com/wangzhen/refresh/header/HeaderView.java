@@ -60,9 +60,10 @@ public abstract class HeaderView extends FrameLayout implements HeaderAction {
      * 改变topMargin偏移量
      */
     private void offset() {
-        if (mHoverOffset <= 0) return;
-        MarginLayoutParams params = (MarginLayoutParams) getLayoutParams();
-        params.topMargin -= mHoverOffset;
-        requestLayout();
+        if (mHoverOffset > 0) {
+            MarginLayoutParams params = (MarginLayoutParams) getLayoutParams();
+            params.topMargin -= mHoverOffset;
+            setLayoutParams(params);
+        }
     }
 }

@@ -349,13 +349,16 @@ public final class RefreshLayout extends LinearLayout {
     public void refreshComplete() {
         if (isRefreshing) {
             mHeaderView.onRefreshComplete();
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    isRefreshing = false;
-                    smoothChangeHeaderMargin(mRefreshThreshold - mHoverOffset, 0);
-                }
-            }, mCollapseDelay);
+            removeCallbacks(mRunnable);
+            postDelayed(mRunnable, mCollapseDelay);
         }
     }
+
+    private Runnable mRunnable = new Runnable() {
+        @Override
+        public void run() {
+            isRefreshing = false;
+            smoothChangeHeaderMargin(mRefreshThreshold - mHoverOffset, 0);
+        }
+    };
 }
