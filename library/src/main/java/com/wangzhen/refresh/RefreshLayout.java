@@ -58,6 +58,8 @@ public final class RefreshLayout extends LinearLayout {
     private int mHeaderHeight;
     //是否获取过HeaderView的高度
     private boolean run;
+    //平滑动画Animator
+    private ValueAnimator mSmoothChangingAnimator;
 
     public RefreshLayout(Context context) {
         this(context, null);
@@ -282,14 +284,14 @@ public final class RefreshLayout extends LinearLayout {
     private void smoothChangeHeaderMargin(int start, int end) {
         if (start < 0) start = 0;
         if (end < 0) end = 0;
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        mSmoothChangingAnimator = ValueAnimator.ofInt(start, end);
+        mSmoothChangingAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 changeHeaderMargin((int) animation.getAnimatedValue());
             }
         });
-        valueAnimator.addListener(new AnimatorListenerAdapter() {
+        mSmoothChangingAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 isAnimating = false;
@@ -300,8 +302,8 @@ public final class RefreshLayout extends LinearLayout {
                 isAnimating = true;
             }
         });
-        valueAnimator.setDuration(DEFAULT_DURATION_TIME);
-        valueAnimator.start();
+        mSmoothChangingAnimator.setDuration(DEFAULT_DURATION_TIME);
+        mSmoothChangingAnimator.start();
     }
 
     /**
@@ -348,6 +350,11 @@ public final class RefreshLayout extends LinearLayout {
      */
     public void refreshComplete() {
         if (isRefreshing) {
+            //动画正在执行，取消动画直接回到刷新位置
+            if (mSmoothChangingAnimator != null && mSmoothChangingAnimator.isRunning()) {
+                mSmoothChangingAnimator.cancel();
+                changeHeaderMargin(mRefreshThreshold);
+            }
             mHeaderView.onRefreshComplete();
             removeCallbacks(mRunnable);
             postDelayed(mRunnable, mCollapseDelay);
