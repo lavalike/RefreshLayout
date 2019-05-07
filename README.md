@@ -10,7 +10,7 @@
 
 #### 引入
 ```gradle
-implementation('com.wangzhen:refresh-layout:0.0.9') {
+implementation('com.wangzhen:refresh-layout:0.2.0') {
     transitive false
 }
 ```
@@ -20,7 +20,7 @@ implementation('com.wangzhen:refresh-layout:0.0.9') {
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="RefreshLayout">
-        <!-- 下拉阻尼值，0~1，默认0.3 -->
+        <!-- 下拉阻尼值，0~1，默认0.5 -->
         <attr name="refresh_factor" format="float" />
         <!-- 是否启用下拉刷新，默认true -->
         <attr name="refresh_enable" format="boolean" />
@@ -41,7 +41,7 @@ implementation('com.wangzhen:refresh-layout:0.0.9') {
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:refresh_enable="true"
-    app:refresh_factor="0.3"
+    app:refresh_factor="0.5"
     app:refresh_threshold="48dp"
     app:refresh_hover_offset="24dp"
     app:refresh_collapse_delay="300">
@@ -67,7 +67,7 @@ refreshLayout.setRefreshEnable(true);
 //3、设置刷新阈值
 refreshLayout.setRefreshThreshold(100);
 //4、设置下拉阻尼
-refreshLayout.setRefreshFactor(0.3f);
+refreshLayout.setRefreshFactor(0.5f);
 //5、设置刷新HeaderView，可继承抽象类HeaderView实现自定义Header
 refreshLayout.setHeaderView(view extends HeaderView);
 //6、设置刷新完毕延迟关闭时间，默认300ms

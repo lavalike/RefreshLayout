@@ -246,7 +246,7 @@ public final class RefreshLayout extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        deltaY = (event.getY() - lastY) * mRefreshFactor;
+        deltaY = getDampingDeltaY(event.getY() - lastY);
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 changeHeaderMargin((int) deltaY);
@@ -273,6 +273,18 @@ public final class RefreshLayout extends LinearLayout {
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    /**
+     * 获得阻尼距离
+     *
+     * @param diff 移动距离
+     * @return 阻尼距离
+     */
+    private float getDampingDeltaY(float diff) {
+        if (diff <= mRefreshThreshold)
+            return diff;
+        return (float) (mRefreshThreshold * Math.pow(diff / mRefreshThreshold, mRefreshFactor));
     }
 
     /**
