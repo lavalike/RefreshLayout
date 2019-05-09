@@ -9,6 +9,7 @@ import android.support.v4.view.ViewCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
@@ -51,7 +52,7 @@ public final class RefreshLayout extends LinearLayout {
     private int mCollapseDelay;
     //下拉偏移量
     private float deltaY;
-    private float lastX;
+    //手指按下时的y
     private float lastY;
     private OnRefreshCallback callback;
     //HeaderView高度
@@ -60,6 +61,7 @@ public final class RefreshLayout extends LinearLayout {
     private boolean run;
     //平滑动画Animator
     private ValueAnimator mSmoothChangingAnimator;
+    private float mTouchSlop;
 
     public RefreshLayout(Context context) {
         this(context, null);
@@ -84,6 +86,7 @@ public final class RefreshLayout extends LinearLayout {
     private void init() {
         setOrientation(VERTICAL);
         isRefreshing = false;
+        mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         //添加默认Header
         setHeaderView(new DefaultRefreshHeader(getContext()));
     }
@@ -201,23 +204,24 @@ public final class RefreshLayout extends LinearLayout {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         if (!isRefreshEnable || isRefreshing || isAnimating) {
-            return super.onInterceptTouchEvent(ev);
+            return false;
         }
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                lastX = ev.getX();
                 lastY = ev.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                //存在情况：mContentView内容未在顶部，下拉到顶部时mContentView会直接跳过前面下拉距离
-                //解决方法：下拉过程中不断更新lastX、lastY坐标为当前坐标，达到从顶部下拉的效果
+                if (lastY < 0) {
+                    //屏蔽刷新过程中的ACTION_MOVE事件
+                    return false;
+                }
                 if (isCanPullDown()) {
-                    lastX = ev.getX();
+                    //存在情况：mContentView内容未在顶部，下拉到顶部时mContentView会直接跳过前面下拉距离
+                    //解决方法：下拉过程中不断更新lastX、lastY坐标为当前坐标，达到从顶部下拉的效果
                     lastY = ev.getY();
                 }
-                float diffX = ev.getX() - lastX;
                 float diffY = ev.getY() - lastY;
-                if (diffY > 0 && diffY > Math.abs(diffX)) {
+                if (diffY > 0 && diffY > mTouchSlop) {
                     return true;
                 }
                 break;
@@ -377,6 +381,7 @@ public final class RefreshLayout extends LinearLayout {
         @Override
         public void run() {
             isRefreshing = false;
+            lastY = -1;
             smoothChangeHeaderMargin(mRefreshThreshold - mHoverOffset, 0);
         }
     };
