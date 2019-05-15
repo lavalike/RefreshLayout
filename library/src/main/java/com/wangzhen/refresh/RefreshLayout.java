@@ -272,7 +272,9 @@ public final class RefreshLayout extends LinearLayout {
                     }
                 } else {
                     isRefreshing = false;
-                    smoothChangeHeaderMargin((int) deltaY, 0);
+                    if (deltaY > 0) {
+                        smoothChangeHeaderMargin((int) deltaY, 0);
+                    }
                 }
                 break;
         }
