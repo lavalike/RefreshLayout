@@ -53,7 +53,10 @@ public final class RefreshLayout extends LinearLayout {
     //下拉偏移量
     private float deltaY;
     //手指按下时的y
-    private float lastY;
+    private float mInitialDownX;
+    //手指按下时的y
+    private float mInitialDownY;
+    private float mInitialMotionY;
     private OnRefreshCallback callback;
     //HeaderView高度
     private int mHeaderHeight;
@@ -61,6 +64,8 @@ public final class RefreshLayout extends LinearLayout {
     private boolean run;
     //平滑动画Animator
     private ValueAnimator mSmoothChangingAnimator;
+    //是否拦截事件
+    boolean isIntercepted = false;
     private float mTouchSlop;
 
     public RefreshLayout(Context context) {
@@ -208,22 +213,40 @@ public final class RefreshLayout extends LinearLayout {
         }
         switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                lastY = ev.getY();
+                mInitialDownX = ev.getX();
+                mInitialDownY = ev.getY();
+                isIntercepted = false;
                 break;
             case MotionEvent.ACTION_MOVE:
-                if (lastY < 0) {
-                    //屏蔽刷新过程中的ACTION_MOVE事件
+                if (isIntercepted || mInitialDownY < 0) {
                     return false;
                 }
+
                 if (isCanPullDown()) {
                     //存在情况：mContentView内容未在顶部，下拉到顶部时mContentView会直接跳过前面下拉距离
                     //解决方法：下拉过程中不断更新lastX、lastY坐标为当前坐标，达到从顶部下拉的效果
-                    lastY = ev.getY();
+                    mInitialDownX = ev.getX();
+                    mInitialDownY = ev.getY();
                 }
-                float diffY = ev.getY() - lastY;
-                if (diffY > 0 && diffY > mTouchSlop) {
+
+                float diffX = ev.getX() - mInitialDownX;
+                float diffY = ev.getY() - mInitialDownY;
+
+                //处理横向滑动
+                if (Math.abs(diffX) > mTouchSlop && Math.abs(diffX) > Math.abs(diffY)) {
+                    isIntercepted = true;
+                    return false;
+                }
+
+                //处理纵向滑动
+                if (diffY > mTouchSlop) {
+                    mInitialMotionY = mInitialDownY + mTouchSlop;
                     return true;
                 }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                isIntercepted = false;
                 break;
         }
         return super.onInterceptTouchEvent(ev);
@@ -250,7 +273,7 @@ public final class RefreshLayout extends LinearLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        deltaY = getDampingDeltaY(event.getY() - lastY);
+        deltaY = getDampingDeltaY(event.getY() - mInitialMotionY);
         switch (event.getAction()) {
             case MotionEvent.ACTION_MOVE:
                 changeHeaderMargin((int) deltaY);
@@ -383,7 +406,7 @@ public final class RefreshLayout extends LinearLayout {
         @Override
         public void run() {
             isRefreshing = false;
-            lastY = -1;
+            mInitialDownY = -1;
             smoothChangeHeaderMargin(mRefreshThreshold - mHoverOffset, 0);
         }
     };
