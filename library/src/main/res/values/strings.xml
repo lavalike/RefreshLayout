@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">library</string>
+    <string name="refresh_pull">下拉可以刷新</string>
+    <string name="refresh_release">松开立即刷新</string>
+    <string name="refresh_refreshing">正在刷新数据中…</string>
+    <string name="refresh_finish">刷新完成</string>
 </resources>

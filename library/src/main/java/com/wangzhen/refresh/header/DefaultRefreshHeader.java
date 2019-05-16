@@ -13,7 +13,7 @@ public class DefaultRefreshHeader extends HeaderView {
 
     private TextView textView;
 
-    private String texts[] = new String[]{"下拉刷新", "释放刷新", "正在刷新", "刷新完成"};
+    private String[] texts = new String[]{"下拉刷新", "释放刷新", "正在刷新", "刷新完成"};
 
     public DefaultRefreshHeader(Context context) {
         super(context);

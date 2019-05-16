@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.wangzhen.refresh.RefreshLayout;
 import com.wangzhen.refresh.callback.OnRefreshCallback;
+import com.wangzhen.refresh.header.CommonRefreshHeader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class RecyclerActivity extends AppCompatActivity implements OnRefreshCall
         setContentView(R.layout.activity_recycler);
         setTitle("RecyclerView示例");
         refreshLayout = findViewById(R.id.refresh);
+        refreshLayout.setHeaderView(new CommonRefreshHeader(this));
         refreshLayout.setOnRefreshCallback(this);
         RecyclerView recyclerView = findViewById(R.id.recycler);
         List<Object> list = new ArrayList<>();
