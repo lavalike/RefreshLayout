@@ -398,7 +398,11 @@ public final class RefreshLayout extends LinearLayout {
             }
             mHeaderView.onRefreshComplete();
             removeCallbacks(mRunnable);
-            postDelayed(mRunnable, mCollapseDelay);
+            if (ViewCompat.isAttachedToWindow(this)) {
+                postDelayed(mRunnable, mCollapseDelay);
+            } else {
+                mRunnable.run();
+            }
         }
     }
 
