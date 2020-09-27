@@ -391,11 +391,6 @@ public final class RefreshLayout extends LinearLayout {
      */
     public void refreshComplete() {
         if (isRefreshing) {
-            //动画正在执行，取消动画直接回到刷新位置
-            if (mSmoothChangingAnimator != null && mSmoothChangingAnimator.isRunning()) {
-                mSmoothChangingAnimator.cancel();
-                changeHeaderMargin(mRefreshThreshold);
-            }
             mHeaderView.onRefreshComplete();
             removeCallbacks(mRunnable);
             if (ViewCompat.isAttachedToWindow(this)) {

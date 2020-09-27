@@ -1,7 +1,6 @@
 package com.wangzhen.demo;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -51,12 +50,7 @@ public class RecyclerActivity extends AppCompatActivity implements OnRefreshCall
 
     @Override
     public void onRefresh() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                refreshLayout.refreshComplete();
-            }
-        }, 1500);
+        refreshLayout.refreshComplete();
     }
 
     class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
