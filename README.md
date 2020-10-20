@@ -1,4 +1,4 @@
-# RefreshLayout
+# refresh-layout
 
 [![Platform](https://img.shields.io/badge/Platform-Android-00CC00.svg?style=flat)](https://www.android.com)
 [![Jcenter](https://img.shields.io/badge/jcenter-RefreshLayout-red.svg?style=flat)](http://jcenter.bintray.com/com/wangzhen/refresh-layout/)
@@ -8,14 +8,14 @@
 
 > 支持任意View的刷新布局
 
-#### 引入
+#### 依赖导入
 ```gradle
 implementation('com.wangzhen:refresh-layout:0.2.3') {
     transitive false
 }
 ```
 
-#### 属性介绍
+#### 属性说明
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
@@ -34,21 +34,7 @@ implementation('com.wangzhen:refresh-layout:0.2.3') {
 </resources>
 ```
 
-
-#### XML配置
-```xml
-<com.wangzhen.refresh.RefreshLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:refresh_enable="true"
-    app:refresh_factor="0.5"
-    app:refresh_threshold="48dp"
-    app:refresh_hover_offset="24dp"
-    app:refresh_collapse_delay="300">
-</com.wangzhen.refresh.RefreshLayout>
-```
-
-#### Java配置
+#### 代码示例
 ```java
 //1、设置刷新回调
 refreshLayout.setOnRefreshCallback(new OnRefreshCallback() {
