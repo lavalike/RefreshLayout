@@ -27,8 +27,8 @@ import java.util.List;
  */
 public class RecyclerActivity extends AppCompatActivity implements OnRefreshCallback {
 
-    private int TYPE_BANNER = 0;
-    private int TYPE_ITEM = 1;
+    private final int TYPE_BANNER = 0;
+    private final int TYPE_ITEM = 1;
     private RefreshLayout refreshLayout;
 
     @Override
@@ -55,7 +55,7 @@ public class RecyclerActivity extends AppCompatActivity implements OnRefreshCall
     }
 
     class Adapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-        private List<Object> datas;
+        private final List<Object> datas;
 
         public Adapter(List<Object> datas) {
             this.datas = datas;

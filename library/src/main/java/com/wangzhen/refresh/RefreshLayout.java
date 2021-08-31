@@ -254,7 +254,7 @@ public final class RefreshLayout extends LinearLayout {
     }
 
     /**
-     * 详见{@link android.support.v4.widget.SwipeRefreshLayout#requestDisallowInterceptTouchEvent(boolean)}
+     * 详见{@link androidx.swiperefreshlayout.widget.SwipeRefreshLayout#requestDisallowInterceptTouchEvent(boolean)}
      *
      * @param disallowIntercept disallowIntercept
      */
@@ -402,7 +402,7 @@ public final class RefreshLayout extends LinearLayout {
         }
     }
 
-    private Runnable mRunnable = new Runnable() {
+    private final Runnable mRunnable = new Runnable() {
         @Override
         public void run() {
             isRefreshing = false;

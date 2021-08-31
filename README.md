@@ -10,9 +10,7 @@
 
 #### 依赖导入
 ```gradle
-implementation('com.wangzhen:refresh-layout:0.2.3') {
-    transitive false
-}
+implementation 'com.wangzhen:refresh-layout:0.2.5'
 ```
 
 #### 属性说明

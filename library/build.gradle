@@ -1,11 +1,10 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.novoda.bintray-release'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     defaultConfig {
         minSdkVersion 17
-        targetSdkVersion 30
+        targetSdkVersion 31
     }
 
     buildTypes {
@@ -19,14 +18,5 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-}
-
-publish {
-    userOrg = 'lavalike'
-    groupId = 'com.wangzhen'
-    artifactId = 'refresh-layout'
-    publishVersion = '0.2.5'
-    desc = '支持任意View的刷新布局'
-    website = 'https://github.com/lavalike/RefreshLayout'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
 }
